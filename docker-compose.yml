@@ -3,7 +3,7 @@ version: "3.8"
 services:
   radarr-cleaner:
     build: .
-    container_name: radarr-cleaner
+    container_name: radarrcleaner
     restart: no
     environment:
       API: ${API}
