@@ -4,7 +4,7 @@ services:
   radarr-cleaner:
     build: .
     container_name: radarr-cleaner
-    restart: unless-stopped
+    restart: no
     environment:
       API: ${API}
       IP: ${IP}
