@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  radarr-cleaner:
+    build: .
+    container_name: radarr-cleaner
+    restart: unless-stopped
+    environment:
+      API: ${API}
+      IP: ${IP}
