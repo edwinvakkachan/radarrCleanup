@@ -5,6 +5,10 @@ import axios from 'axios';
 const api = process.env.API;
 const ip = process.env.IP;
 
+if (!api || !ip) {
+  console.error("❌ Missing API or IP environment variables");
+  process.exit(1);
+}
 
 
 
