@@ -68,7 +68,7 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
 
 }
 
-removedMoviesDelete()
+
 
 //Removing completed movies with title mismatch
 
@@ -130,7 +130,7 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
 console.log(`✅ Removed ${queueId.length} completed movies`);
 
 }
-removedCompletedMovies();
+
 
 
 
