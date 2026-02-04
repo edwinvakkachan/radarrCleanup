@@ -10,7 +10,12 @@ if (!api || !ip) {
   process.exit(1);
 }
 
+//delay function 
 
+function delay(ms) {
+   console.log(`Waiting...${ms} sec`);
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // removing movies that are removed from importlist
 async function removedMoviesDelete(){
@@ -139,6 +144,7 @@ async function main() {
     console.log("🚀 Radarr cleanup started");
 
     await removedMoviesDelete();
+    await delay(15)
     await removedCompletedMovies();
 
     console.log("🏁 Cleanup completed successfully");
