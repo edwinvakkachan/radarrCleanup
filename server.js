@@ -12,7 +12,7 @@ if (!api || !ip) {
 
 //delay function 
 
-function delay(ms) {
+async function delay(ms) {
    console.log(`Waiting...${ms} sec`);
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -144,7 +144,7 @@ async function main() {
     console.log("🚀 Radarr cleanup started");
 
     await removedMoviesDelete();
-    await delay(15)
+    await delay(15000)
     await removedCompletedMovies();
 
     console.log("🏁 Cleanup completed successfully");
