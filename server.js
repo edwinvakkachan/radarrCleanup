@@ -4,10 +4,20 @@ import axios from 'axios';
 
 const api = process.env.API;
 const ip = process.env.IP;
+const BOT_TOKEN = process.env.TG_BOT_TOKEN;
+const CHAT_ID = process.env.TG_CHAT_ID;
 
 if (!api || !ip) {
   console.error("❌ Missing API or IP environment variables");
   process.exit(1);
+}
+//telgram bot message
+async function sendTelegramMessage(text) {
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  await axios.post(url, {
+    chat_id: CHAT_ID,
+    text: text
+  });
 }
 
 //delay function 
@@ -41,6 +51,7 @@ async function removedMoviesDelete(){
             if(value2.name=='Unknown'){
                 queueId.push(value.id)
                 console.log(`🗑️ ${value.title}`);
+                sendTelegramMessage(`🗑️ ${value.title}`)
             }
         }
     }
@@ -104,6 +115,7 @@ try {
   if(value?.statusMessages?.[0]?.messages?.[0] == 'Movie title mismatch, automatic import is not possible. Manual Import required.') {
        queueId.push(value.id)
        console.log(`🗑️ ${value.title}`);
+       sendTelegramMessage(`🗑️ ${value.title}`)
   }
 }
 
@@ -148,9 +160,11 @@ async function main() {
     await removedCompletedMovies();
 
     console.log("🏁 Cleanup completed successfully");
+    sendTelegramMessage("🏁 Cleanup completed successfully")
     process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Cleanup failed:", err.message);
+    sendTelegramMessage("❌ Cleanup failed:", err.message)
     process.exit(1); // ❌ failure exit
   }
 }
