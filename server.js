@@ -199,7 +199,23 @@ return;
 
     
 }
-
+async function qbitorrentFileInfo(downloadId){
+  const responce = await axios.get('http://192.168.0.90:8080/api/v2/torrents/info');
+  for (const value of responce.data){
+    if(value.hash==downloadId.toLowerCase()){
+      if(value.time_active>=86400){
+        console.log('YES atcive time: ',value.time_active)
+        return true
+      }
+      else {
+        console.log('NO active time : ',value.time_active)
+        return false
+      } 
+    }
+  }
+  console.log('NO data found')
+  return false;
+}
 async function removingStalledMovies(){
    console.log('🔍started to removing the delayed movies')
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
@@ -215,12 +231,44 @@ async function removingStalledMovies(){
         protocol: "torrent",
       }
     })
+    const queueId=[];
     for (const value of responce.data.records){
       if(value.status=='warning' && value.errorMessage=='The download is stalled with no connections'){
-        sendTelegramMessage('stallled ',value.title)
-        console.log(value.title)
+        if(await qbitorrentFileInfo(value.downloadId)){
+          console.log('stalled movie found');
+          await delay(3000)
+          sendTelegramMessage('stalled ',value.title)
+          console.log(value.title)
+          queueId.push(value.id);
+          //delte functionality
+        }
       }
     }
+    if(!queueId.length){
+      console.log('No delayed movie')
+      return
+    }
+
+    console.log('🗑️ deleteing the delayed movies');
+ await delay(1000)
+ await axios.delete(`${ip}/api/v3/queue/bulk`,{
+    headers: {
+        "X-Api-Key": api
+      },
+      params:{
+        removeFromClient:true,
+        blocklist:true,
+        skipRedownload:false,
+        changeCategory:false
+      },
+      data:{
+        ids:queueId,
+      }
+})
+
+ console.log(`✅ Removed ${queueId.length} delayed movies`);
+
+
 }
 
 
@@ -229,11 +277,11 @@ async function main() {
     console.log("🚀 Radarr cleanup started");
 
     await removedMoviesDelete();
-    await delay(15000)
+    await delay(10000)
     await removedCompletedMovies();
-    await delay(15000)
+    await delay(10000)
     await removingStoppedMOvies();
-    await delay(15000)
+    await delay(10000)
     await removingStalledMovies()
 
     console.log("🏁 Cleanup completed successfully");
