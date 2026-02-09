@@ -147,8 +147,81 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
 console.log(`✅ Removed ${queueId.length} completed movies`);
 
 }
+//removing stopped movies
+async function removingStoppedMOvies(){
+  console.log('🔍started to removing the stopped movies')
+ const responce =  await axios.get(`${ip}/api/v3/queue`,{
+         headers: {
+        "X-Api-Key": api
+      },
+      params: {
+        page: 1,
+        pageSize: 500,
+        sortDirection: "default",
+        includeUnknownMovieItems: true,
+        includeMovie: true,
+        protocol: "torrent",
+      }
+    })
+    const queueId=[]
+    for (const value of responce.data.records){
+      if(value.status == 'paused'){
+        queueId.push(value.id)
+        console.log(value.title);
+        sendTelegramMessage(value.title)
+      }
+    }
+
+ if(!queueId.length){
+console.log('✅ no movies are paused to remove')
+return;
+ }
+
+ console.log('🗑️ deleteing the paused moovies');
+ await delay(1000)
+ await axios.delete(`${ip}/api/v3/queue/bulk`,{
+    headers: {
+        "X-Api-Key": api
+      },
+      params:{
+        removeFromClient:true,
+        blocklist:true,
+        skipRedownload:false,
+        changeCategory:false
+      },
+      data:{
+        ids:queueId,
+      }
+})
+
+ console.log(`✅ Removed ${queueId.length} paused movies`);
 
 
+    
+}
+
+async function removingStalledMovies(){
+   console.log('🔍started to removing the delayed movies')
+ const responce =  await axios.get(`${ip}/api/v3/queue`,{
+         headers: {
+        "X-Api-Key": api
+      },
+      params: {
+        page: 1,
+        pageSize: 500,
+        sortDirection: "default",
+        includeUnknownMovieItems: true,
+        includeMovie: true,
+        protocol: "torrent",
+      }
+    })
+    for (const value of responce.data.records){
+      if(value.status=='warning' && value.errorMessage=='The download is stalled with no connections'){
+        sendTelegramMessage('stallled ',value.title)
+        console.log(value.title)
+      }
+    }
+}
 
 
 async function main() {
@@ -158,6 +231,10 @@ async function main() {
     await removedMoviesDelete();
     await delay(15000)
     await removedCompletedMovies();
+    await delay(15000)
+    await removingStoppedMOvies();
+    await delay(15000)
+    await removingStalledMovies()
 
     console.log("🏁 Cleanup completed successfully");
     sendTelegramMessage("🏁 Cleanup completed successfully")
