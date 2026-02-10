@@ -40,11 +40,34 @@ async function sendTelegramMessage(text) {
 
 //delay function 
 
-async function delay(ms) {
-   console.log(`Waiting...${ms} sec`);
+async function delay(ms,noLog) {
+  if(noLog){
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  else{
+console.log(`Waiting...${ms} sec`);
   return new Promise(resolve => setTimeout(resolve, ms));
+  }
+   
 }
-
+// function to delete files
+async function fileDelete(queueId){
+   await axios.delete(`${ip}/api/v3/queue/bulk`,{
+    headers: {
+        "X-Api-Key": api
+      },
+      params:{
+        removeFromClient:true,
+        blocklist:true,
+        skipRedownload:false,
+        changeCategory:false
+      },
+      data:{
+        ids:queueId,
+      }
+})
+console.log(`✅ Removed ${queueId.length} movies`);
+}
 // removing movies that are removed from importlist
 async function removedMoviesDelete(){
      console.log("🔍 Removing movies that are removed from import list");
@@ -69,7 +92,7 @@ async function removedMoviesDelete(){
             if(value2.name=='Unknown'){
                 queueId.push(value.id)
                 console.log(`🗑️ ${value.title}`);
-                sendTelegramMessage(`🗑️ ${value.title}`)
+               await sendTelegramMessage(`🗑️ ${value.title}`)
             }
         }
     }
@@ -133,7 +156,7 @@ try {
   if(value?.statusMessages?.[0]?.messages?.[0] == 'Movie title mismatch, automatic import is not possible. Manual Import required.') {
        queueId.push(value.id)
        console.log(`🗑️ ${value.title}`);
-       sendTelegramMessage(`🗑️ ${value.title}`)
+       await sendTelegramMessage(`🗑️ ${value.title}`)
   }
 }
 
@@ -186,7 +209,7 @@ async function removingStoppedMOvies(){
       if(value.status == 'paused'){
         queueId.push(value.id)
         console.log(value.title);
-        sendTelegramMessage(value.title)
+       await sendTelegramMessage(value.title)
       }
     }
 
@@ -272,7 +295,7 @@ async function removingStalledMovies(){
         if(await qbitorrentFileInfo(value.downloadId)){
           console.log('☑️ stalled movie found');
           await delay(3000)
-          sendTelegramMessage('☑️ stalled ',value.title)
+          await sendTelegramMessage('☑️ stalled ',value.title)
           console.log(value.title)
           queueId.push(value.id);
         }
@@ -280,7 +303,7 @@ async function removingStalledMovies(){
     }
     if(!queueId.length){
       console.log('☑️ No stalled movie found')
-      sendTelegramMessage('☑️ No stalled movie found')
+      await sendTelegramMessage('☑️ No stalled movie found')
       return
     }
 
@@ -305,33 +328,84 @@ async function removingStalledMovies(){
 
 
 }
-// removing the failed metadata download movies
+// removing the failed metadata download movies ..........
+async function qbitmetadatainfoSearch(downloadId){
+const {data} = await qb.get('/api/v2/torrents/info',{
+    params: { hashes: downloadId.toLowerCase() }
+  });
+  for (const value of data){
+    if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 1200 && value.availability==0){
+      return true
+    }
+  }
+return false;
+
+}
 async function removingFailedMetadataDownloadMovies(){
-  
+  console.log("🔍 Removing metadata failed to dwonload movies");
+  const {data} = await axios.get(`${ip}/api/v3/queue`,{
+  headers: {
+        "X-Api-Key": api
+      },
+      params: {
+        page: 1,
+        pageSize: 500,
+        sortDirection: "default",
+        includeUnknownMovieItems: true,
+        includeMovie: true,
+        protocol: "torrent",
+      }
+})
+const queueId=[];
+console.log('it will take upto 2 minute');
+for (const value of data.records){
+  await delay(300,true)
+  if(!value.downloadId){
+    console.log(`Torrent hash not found ${value.title}`)
+    continue;
+  }
+ if(await qbitmetadatainfoSearch(value.downloadId)){
+   console.log('found: ',value.title)
+   queueId.push(value.id);
+   continue;
+ }
+}
+if(!queueId.length){
+  console.log('No file found with zero metadata')
+  return;
+}
+
+console.log('Zero metadata movies are going to delete')
+await fileDelete(queueId);
+
+
 }
 
 
 async function main() {
   try {
     console.log("🚀 Radarr cleanup started");
+    await sendTelegramMessage("🚀 Radarr cleanup started")
 
     await login();
-    // await removedMoviesDelete();
-    // await delay(10000)
-    // await removedCompletedMovies();
-    // await delay(10000)
-    // await removingStoppedMOvies();
-    // await delay(10000)
-    // await removingStalledMovies()
+    await removedMoviesDelete();
+    await delay(10000)
+    await removedCompletedMovies();
+    await delay(10000)
+    await removingStoppedMOvies();
+    await delay(10000)
+    await removingStalledMovies()
+    await delay(10000)
     await removingFailedMetadataDownloadMovies();
+  
   
 
     console.log("🏁 Cleanup completed successfully");
-    sendTelegramMessage("🏁 Cleanup completed successfully")
+   await sendTelegramMessage("🏁 Cleanup completed successfully")
     process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Cleanup failed:", err.message);
-    sendTelegramMessage("❌ Cleanup failed:", err.message)
+   await sendTelegramMessage("❌ Cleanup failed:", err.message)
     process.exit(1); // ❌ failure exit
   }
 }
