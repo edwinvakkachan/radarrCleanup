@@ -312,13 +312,13 @@ async function main() {
   try {
     console.log("🚀 Radarr cleanup started");
 
-    // await removedMoviesDelete();
-    // await delay(10000)
-    // await removedCompletedMovies();
-    // await delay(10000)
-    // await removingStoppedMOvies();
-    // await delay(10000)
     await login();
+    await removedMoviesDelete();
+    await delay(10000)
+    await removedCompletedMovies();
+    await delay(10000)
+    await removingStoppedMOvies();
+    await delay(10000)
     await removingStalledMovies()
 
     console.log("🏁 Cleanup completed successfully");
