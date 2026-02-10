@@ -280,7 +280,8 @@ async function removingStalledMovies(){
       }
     }
     if(!queueId.length){
-      console.log('No stalled movie found')
+      console.log('☑️ No stalled movie found')
+      sendTelegramMessage('☑️ No stalled movie found')
       return
     }
 
