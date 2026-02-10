@@ -8,3 +8,15 @@ services:
     environment:
       API: ${API}
       IP: ${IP}
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN}
+      TG_CHAT_ID: ${TG_CHAT_ID}
+      QBIT_TIME: ${QBIT_TIME}
+      QBITIP: ${QBITIP}
+      QBITUSER: ${QBITUSER}
+      QBITPASS: ${QBITPASS}
+
+
+
+
+
+

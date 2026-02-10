@@ -305,7 +305,10 @@ async function removingStalledMovies(){
 
 
 }
-
+// removing the failed metadata download movies
+async function removingFailedMetadataDownloadMovies(){
+  
+}
 
 
 async function main() {
@@ -313,13 +316,14 @@ async function main() {
     console.log("🚀 Radarr cleanup started");
 
     await login();
-    await removedMoviesDelete();
-    await delay(10000)
-    await removedCompletedMovies();
-    await delay(10000)
-    await removingStoppedMOvies();
-    await delay(10000)
-    await removingStalledMovies()
+    // await removedMoviesDelete();
+    // await delay(10000)
+    // await removedCompletedMovies();
+    // await delay(10000)
+    // await removingStoppedMOvies();
+    // await delay(10000)
+    // await removingStalledMovies()
+    await removingFailedMetadataDownloadMovies();
   
 
     console.log("🏁 Cleanup completed successfully");
