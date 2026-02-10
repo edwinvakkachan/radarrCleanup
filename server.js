@@ -113,7 +113,7 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
       params:{
         removeFromClient:true,
         blocklist:false,
-        skipRedownload:false,
+        skipRedownload:true,
         changeCategory:false
       },
       data:{
@@ -178,7 +178,7 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
       params:{
         removeFromClient:true,
         blocklist:false,
-        skipRedownload:false,
+        skipRedownload:true,
         changeCategory:false
       },
       data:{
