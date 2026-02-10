@@ -1,11 +1,29 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import axios from 'axios';
+import { wrapper } from "axios-cookiejar-support";
+import { CookieJar } from "tough-cookie";
+
+
+
 
 const api = process.env.API;
 const ip = process.env.IP;
 const BOT_TOKEN = process.env.TG_BOT_TOKEN;
 const CHAT_ID = process.env.TG_CHAT_ID;
+const qbitTime = process.env.QBIT_TIME;
+const qbitIp = process.env.QBITIP;
+const qbitUserName= process.env.QBITUSER;
+const qbitPassword = process.env.QBITPASS;
+
+
+//qbit login
+const jar = new CookieJar();
+const qb = wrapper(axios.create({
+  baseURL: qbitIp, // qBittorrent Web UI
+  jar,
+  withCredentials: true
+}));
 
 if (!api || !ip) {
   console.error("❌ Missing API or IP environment variables");
@@ -199,16 +217,33 @@ return;
 
     
 }
+//removing the stalled movies ....................
+async function login() {
+  const res = await qb.post(
+    "/api/v2/auth/login",
+    new URLSearchParams({
+      username: qbitUserName,
+      password: qbitPassword
+    })
+  );
+
+  if (res.data !== "Ok.") {
+    throw new Error("Login failed");
+  }
+
+  console.log("✅ Logged into qBittorrent");
+}
+
 async function qbitorrentFileInfo(downloadId){
-  const responce = await axios.get('http://192.168.0.90:8080/api/v2/torrents/info');
+  const responce = await qb.get('/api/v2/torrents/info');
   for (const value of responce.data){
     if(value.hash==downloadId.toLowerCase()){
-      if(value.time_active>=86400){
-        console.log('YES atcive time: ',value.time_active)
+      if(value.time_active>=qbitTime){
+        console.log(`✅ YES atcive time: ${Math.round(value.time_active/3600)}hrs` )
         return true
       }
       else {
-        console.log('NO active time : ',value.time_active)
+        console.log(`❌ NO atcive time: ${Math.round(value.time_active/3600)}hrs`)
         return false
       } 
     }
@@ -234,22 +269,22 @@ async function removingStalledMovies(){
     const queueId=[];
     for (const value of responce.data.records){
       if(value.status=='warning' && value.errorMessage=='The download is stalled with no connections'){
+       console.log('⚠️ ',value.title)
         if(await qbitorrentFileInfo(value.downloadId)){
-          console.log('stalled movie found');
+          console.log('☑️ stalled movie found');
           await delay(3000)
-          sendTelegramMessage('stalled ',value.title)
+          sendTelegramMessage('☑️ stalled ',value.title)
           console.log(value.title)
           queueId.push(value.id);
-          //delte functionality
         }
       }
     }
     if(!queueId.length){
-      console.log('No delayed movie')
+      console.log('No stalled movie found')
       return
     }
 
-    console.log('🗑️ deleteing the delayed movies');
+    console.log('🗑️ deleteing the stalled movies');
  await delay(1000)
  await axios.delete(`${ip}/api/v3/queue/bulk`,{
     headers: {
@@ -266,7 +301,7 @@ async function removingStalledMovies(){
       }
 })
 
- console.log(`✅ Removed ${queueId.length} delayed movies`);
+ console.log(`✅ Removed ${queueId.length} stalled movies`);
 
 
 }
@@ -276,12 +311,13 @@ async function main() {
   try {
     console.log("🚀 Radarr cleanup started");
 
-    await removedMoviesDelete();
-    await delay(10000)
-    await removedCompletedMovies();
-    await delay(10000)
-    await removingStoppedMOvies();
-    await delay(10000)
+    // await removedMoviesDelete();
+    // await delay(10000)
+    // await removedCompletedMovies();
+    // await delay(10000)
+    // await removingStoppedMOvies();
+    // await delay(10000)
+    await login();
     await removingStalledMovies()
 
     console.log("🏁 Cleanup completed successfully");
