@@ -235,10 +235,12 @@ async function login() {
 }
 
 async function qbitorrentFileInfo(downloadId){
-  const responce = await qb.get('/api/v2/torrents/info');
-  for (const value of responce.data){
-    if(value.hash==downloadId.toLowerCase()){
-      if(value.time_active>=qbitTime){
+  const {data} = await qb.get('/api/v2/torrents/info',{
+    params: { hashes: downloadId.toLowerCase() }
+  });
+ 
+     for (const value of data){
+        if(value.time_active>=qbitTime){
         console.log(`✅ YES atcive time: ${Math.round(value.time_active/3600)}hrs` )
         return true
       }
@@ -246,10 +248,7 @@ async function qbitorrentFileInfo(downloadId){
         console.log(`❌ NO atcive time: ${Math.round(value.time_active/3600)}hrs`)
         return false
       } 
-    }
-  }
-  console.log('NO data found')
-  return false;
+     }
 }
 async function removingStalledMovies(){
    console.log('🔍started to removing the delayed movies')
@@ -308,6 +307,7 @@ async function removingStalledMovies(){
 }
 
 
+
 async function main() {
   try {
     console.log("🚀 Radarr cleanup started");
@@ -320,6 +320,7 @@ async function main() {
     await removingStoppedMOvies();
     await delay(10000)
     await removingStalledMovies()
+  
 
     console.log("🏁 Cleanup completed successfully");
     sendTelegramMessage("🏁 Cleanup completed successfully")
