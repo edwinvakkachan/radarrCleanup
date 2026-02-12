@@ -159,7 +159,12 @@ try {
   for (const value of responce.data.records){ 
 
   if(value?.statusMessages?.[0]?.messages?.[0] == 'Movie title mismatch, automatic import is not possible. Manual Import required.') {
-       queueId.push(value.id)
+       if (/malayalam|mal/i.test(value.title.toLowerCase())) {
+    console.log("🚨 Please remove Manualy ", value.title);
+    await sendTelegramMessage("🚨 Please remove Manualy", value.title)
+    continue;
+}   
+    queueId.push(value.id)
        console.log(`🗑️ ${value.title}`);
        await sendTelegramMessage(`🗑️ ${value.title}`)
   }
