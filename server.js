@@ -67,10 +67,12 @@ async function fileDelete(queueId){
       }
 })
 console.log(`✅ Removed ${queueId.length} movies`);
+await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
 }
 // removing movies that are removed from importlist
 async function removedMoviesDelete(){
      console.log("🔍 Removing movies that are removed from import list");
+     await sendTelegramMessage("🔍 Removing movies that are removed from import list")
 
     const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
@@ -99,6 +101,7 @@ async function removedMoviesDelete(){
 
       if (!queueId.length) {
     console.log("✅ No movies to remove (Unknown language)");
+    await sendTelegramMessage('✅ No movies to remove (Unknown language)')
     return;
   }
 
@@ -122,6 +125,7 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
 })
 
  console.log(`✅ Removed ${queueId.length} movies`);
+ await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
 
 }
 
@@ -132,6 +136,7 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
 async function removedCompletedMovies(){
 
   console.log("🔍 Removing completed movies with title mismatch");
+  await sendTelegramMessage("🔍 Removing completed movies with title mismatch");
     const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -162,6 +167,7 @@ try {
 
   if (!queueId.length) {
     console.log("✅ No completed movies to remove");
+    await sendTelegramMessage('✅ No completed movies to remove')
     return;
   }
 
@@ -186,11 +192,13 @@ await axios.delete(`${ip}/api/v3/queue/bulk`,{
       }
 })
 console.log(`✅ Removed ${queueId.length} completed movies`);
+await sendTelegramMessage('✅ Removed ${queueId.length} completed movies')
 
 }
 //removing stopped movies
 async function removingStoppedMOvies(){
   console.log('🔍started to removing the stopped movies')
+  await sendTelegramMessage('🔍started to removing the stopped movies')
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -215,6 +223,7 @@ async function removingStoppedMOvies(){
 
  if(!queueId.length){
 console.log('✅ no movies are paused to remove')
+await sendTelegramMessage('✅ no movies are paused to remove')
 return;
  }
 
@@ -236,6 +245,7 @@ return;
 })
 
  console.log(`✅ Removed ${queueId.length} paused movies`);
+ await sendTelegramMessage('✅ Removed ${queueId.length} paused movies')
 
 
     
@@ -275,6 +285,7 @@ async function qbitorrentFileInfo(downloadId){
 }
 async function removingStalledMovies(){
    console.log('🔍started to removing the delayed movies')
+   await sendTelegramMessage('🔍started to removing the delayed movies')
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -297,6 +308,7 @@ async function removingStalledMovies(){
           await delay(3000)
           await sendTelegramMessage('☑️ stalled ',value.title)
           console.log(value.title)
+          await sendTelegramMessage(value.title)
           queueId.push(value.id);
         }
       }
@@ -325,6 +337,7 @@ async function removingStalledMovies(){
 })
 
  console.log(`✅ Removed ${queueId.length} stalled movies`);
+ await sendTelegramMessage(`✅ Removed ${queueId.length} stalled movies`)
 
 
 }
@@ -343,6 +356,7 @@ return false;
 }
 async function removingFailedMetadataDownloadMovies(){
   console.log("🔍 Removing metadata failed to dwonload movies");
+  await sendTelegramMessage("🔍 Removing metadata failed to download movies")
   const {data} = await axios.get(`${ip}/api/v3/queue`,{
   headers: {
         "X-Api-Key": api
@@ -366,16 +380,18 @@ for (const value of data.records){
   }
  if(await qbitmetadatainfoSearch(value.downloadId)){
    console.log('found: ',value.title)
+   await sendTelegramMessage(value.title)
    queueId.push(value.id);
    continue;
  }
 }
 if(!queueId.length){
   console.log('No file found with zero metadata')
+  await sendTelegramMessage('No file found with zero metadata')
   return;
 }
 
-console.log('Zero metadata movies are going to delete')
+
 await fileDelete(queueId);
 
 
