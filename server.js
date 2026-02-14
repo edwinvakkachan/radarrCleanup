@@ -403,6 +403,32 @@ await fileDelete(queueId);
 
 }
 
+async function triggerHAWebhook(errorMessage) {
+  try {
+    await axios.post(
+      "https://homeassistant.wreath.blog:8123/api/webhook/-7rE70IhjZn-cQPZLu2u3D5il",
+      {
+        status: "error",
+        message: errorMessage,
+        time: new Date().toISOString()
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        timeout: 5000
+      }
+    );
+
+    console.log("🏠 Home Assistant webhook triggered");
+    await sendTelegramMessage("🏠 Home Assistant webhook triggered")
+  } catch (err) {
+    console.error("⚠️ Failed to trigger HA webhook:", err.message);
+    await sendTelegramMessage("⚠️ Failed to trigger HA webhook")
+  }
+}
+
+
 
 async function main() {
   try {
@@ -419,6 +445,8 @@ async function main() {
     await removingStalledMovies()
     await delay(10000)
     await removingFailedMetadataDownloadMovies();
+
+    
   
   
 
@@ -426,8 +454,9 @@ async function main() {
    await sendTelegramMessage("🏁 Cleanup completed successfully")
     process.exit(0); // ✅ clean exit
   } catch (err) {
-    console.error("❌ Cleanup failed:", err.message);
-   await sendTelegramMessage("❌ Cleanup failed:", err.message)
+    console.error("❌ Cleanup error :", err.message);
+   await sendTelegramMessage("❌ Cleanup error triggering webhook:")
+   await triggerHAWebhook('worked')
     process.exit(1); // ❌ failure exit
   }
 }
