@@ -15,6 +15,8 @@ const qbitTime = process.env.QBIT_TIME;
 const qbitIp = process.env.QBITIP;
 const qbitUserName= process.env.QBITUSER;
 const qbitPassword = process.env.QBITPASS;
+const homeassistantWebHook = process.env.HOMEASSISTANTWEBHOOK;
+
 
 
 //qbit login
@@ -406,7 +408,7 @@ await fileDelete(queueId);
 async function triggerHAWebhook(errorMessage) {
   try {
     await axios.post(
-      "https://homeassistant.wreath.blog:8123/api/webhook/-7rE70IhjZn-cQPZLu2u3D5il",
+      `${homeassistantWebHook}`,
       {
         status: "error",
         message: errorMessage,
