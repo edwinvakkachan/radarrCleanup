@@ -4,15 +4,25 @@ import config from "./config.js";
 import axios from "axios";
 
 
+// qbit login
 
-//qbit login
+// const jar = new CookieJar();
+// const qb = wrapper(axios.create({
+//   baseURL: config.qbitIp, // qBittorrent Web UI
+//   jar,
+//   withCredentials: true
+// }));
+
+
 const jar = new CookieJar();
-const qb = wrapper(axios.create({
-  baseURL: config.qbitIp, // qBittorrent Web UI
-  jar,
-  withCredentials: true
-}));
 
+export const qb = wrapper(
+  axios.create({
+    baseURL: config.qbitIp,
+    jar,
+    withCredentials: true
+  })
+);
 
 
 export async function login() {

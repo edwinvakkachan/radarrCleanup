@@ -2,16 +2,9 @@ import config from "./config.js";
 import axios from "axios";
 import { sendTelegramMessage } from "./telegramMessage.js";
 import { fileDelete } from "./fileDelete.js";
-import { wrapper } from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
 
 
-const jar = new CookieJar();
-const qb = wrapper(axios.create({
-  baseURL: config.qbitIp, // qBittorrent Web UI
-  jar,
-  withCredentials: true
-}));
+import { qb } from "./login.js";
 
 
  async function qbitorrentFileInfo(downloadId){

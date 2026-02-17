@@ -5,16 +5,7 @@ import { fileDelete } from "./fileDelete.js";
 import { delay } from "./delay.js";
 
 
-import { wrapper } from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
-
-
-const jar = new CookieJar();
-const qb = wrapper(axios.create({
-  baseURL: config.qbitIp, // qBittorrent Web UI
-  jar,
-  withCredentials: true
-}));
+import { qb } from "./login.js";
 
 async function qbitmetadatainfoSearch(downloadId){
 const {data} = await qb.get('/api/v2/torrents/info',{
