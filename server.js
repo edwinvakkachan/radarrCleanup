@@ -4,7 +4,7 @@ import  {sendTelegramMessage}  from './telegramMessage.js';
 import { delay } from './delay.js';
 import { removeMoviesAlreadyDeleted } from './removeMoviesAlreadyDeleted.js';
 import { removeMoviesWhichAreCompletedAndDeleted } from './removeMoviesWhichAreCompletedAndDeleted.js';
-import { removingStoppedMOvies } from './removingStoppedMOvies.js';
+import { removingStoppedMOvies } from './removingStoppedMovies.js';
 import { login } from './login.js';
 import { removingStalledMovies } from './removingStalledMovies.js';
 import { removingFailedMetadataDownloadMovies } from './removingFailedMetadataDownloadMovies.js';
