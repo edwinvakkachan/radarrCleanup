@@ -40,6 +40,7 @@ async function main() {
   } catch (err) {
     console.error("❌ Radarr Cleanup error :", err.message);
    await sendTelegramMessage("❌ Radarr Cleanup error triggering webhook:")
+   await sendTelegramMessage(err.message)
    await triggerHAWebhook('worked')
     process.exit(1); // ❌ failure exit
   }
