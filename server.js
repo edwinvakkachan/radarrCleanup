@@ -92,13 +92,20 @@ async function removedMoviesDelete(){
    const queueId = [];
     for (const value of responce.data.records){
 
-        for (const value2 of value.languages){
-            if(value2.name=='Unknown'){
-                queueId.push(value.id)
-                console.log(`🗑️ ${value.title}`);
-               await sendTelegramMessage(`🗑️ ${value.title}`)
-            }
-        }
+      if(!value.movieId){
+        console.log(value.title)
+        if (/malayalam|mal/i.test(value.title.toLowerCase())) {
+    console.log("🚨 Please remove Manualy ", value.title);
+    await sendTelegramMessage("🚨 Please remove Manualy")
+    await sendTelegramMessage(value.title)
+    continue;
+}   
+queueId.push(value.id)
+console.log(`🗑️ ${value.title}`);
+await sendTelegramMessage(`🗑️ ${value.title}`)
+
+      }
+
     }
 
       if (!queueId.length) {
@@ -452,8 +459,8 @@ async function main() {
   
   
 
-    console.log("🏁 Cleanup completed successfully");
-   await sendTelegramMessage("🏁 Cleanup completed successfully")
+    console.log("🏁Radarr Cleanup completed successfully");
+   await sendTelegramMessage("🏁Radarr Cleanup completed successfully")
     process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Cleanup error :", err.message);
