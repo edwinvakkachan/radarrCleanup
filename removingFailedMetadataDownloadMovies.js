@@ -1,0 +1,78 @@
+import config from "./config.js";
+import axios from "axios";
+import { sendTelegramMessage } from "./telegramMessage.js";
+import { fileDelete } from "./fileDelete.js";
+import { delay } from "./delay.js";
+
+
+import { wrapper } from "axios-cookiejar-support";
+import { CookieJar } from "tough-cookie";
+
+
+const jar = new CookieJar();
+const qb = wrapper(axios.create({
+  baseURL: config.qbitIp, // qBittorrent Web UI
+  jar,
+  withCredentials: true
+}));
+
+async function qbitmetadatainfoSearch(downloadId){
+const {data} = await qb.get('/api/v2/torrents/info',{
+    params: { hashes: downloadId.toLowerCase() }
+  });
+  for (const value of data){
+    if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 1200 && value.availability==0){
+      return true
+    }
+  }
+return false;
+
+}
+export async function removingFailedMetadataDownloadMovies(){
+  console.log("🔍 Removing metadata failed to dwonload movies");
+  await sendTelegramMessage("🔍 Removing metadata failed to download movies")
+  const {data} = await axios.get(`${config.ip}/api/v3/queue`,{
+  headers: {
+        "X-Api-Key": config.api
+      },
+      params: {
+        page: 1,
+        pageSize: 500,
+        sortDirection: "default",
+        includeUnknownMovieItems: true,
+        includeMovie: true,
+        protocol: "torrent",
+      }
+})
+const queueId=[];
+console.log('it will take upto 2 minute');
+for (const value of data.records){
+  await delay(300,true)
+  if(!value.downloadId){
+    console.log(`Torrent hash not found ${value.title}`)
+    continue;
+  }
+ if(await qbitmetadatainfoSearch(value.downloadId)){
+   console.log('found: ',value.title)
+   await sendTelegramMessage(value.title)
+   queueId.push(value.id);
+   continue;
+ }
+}
+if(!queueId.length){
+  console.log('No file found with zero metadata')
+  await sendTelegramMessage('No file found with zero metadata')
+  return;
+}
+
+
+  const removeFromClient=true;
+  const blocklist=true;
+  const skipRedownload=false;
+
+await fileDelete(queueId, removeFromClient, blocklist, skipRedownload);
+
+
+
+
+}
