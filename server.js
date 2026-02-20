@@ -18,6 +18,8 @@ if (!config.api || !config.ip) {
 
 async function main() {
   try {
+    console.log('🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩');
+    await sendTelegramMessage('🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩');
     console.log("🚀 Radarr cleanup started");
     await sendTelegramMessage("🚀 Radarr cleanup started")
 
@@ -36,7 +38,9 @@ async function main() {
   
     console.log("🏁 Radarr Cleanup completed successfully");
    await sendTelegramMessage("🏁 Radarr Cleanup completed successfully")
-    process.exit(0); // ✅ clean exit
+    console.log('🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩');
+    await sendTelegramMessage('🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩'); 
+   process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Radarr Cleanup error :", err.message);
    await sendTelegramMessage("❌ Radarr Cleanup error triggering webhook:")
