@@ -24,15 +24,15 @@ async function main() {
     await sendTelegramMessage("🚀 Radarr cleanup started")
 
     await login();
-    await removeMoviesAlreadyDeleted();
-    await delay(10000)
-    await removeMoviesWhichAreCompletedAndDeleted();
-    await delay(10000)
     await removingStoppedMOvies();
+    await delay(10000)
+    await removingFailedMetadataDownloadMovies();
     await delay(10000)
     await removingStalledMovies()
     await delay(10000)
-    await removingFailedMetadataDownloadMovies();
+    await removeMoviesAlreadyDeleted();
+    await delay(10000)
+    await removeMoviesWhichAreCompletedAndDeleted();
 
     
   
