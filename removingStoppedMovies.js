@@ -2,6 +2,7 @@ import config from "./config.js";
 import axios from "axios";
 import { sendTelegramMessage } from "./telegramMessage.js";
 import { fileDelete } from "./fileDelete.js";
+import { delay } from "./delay.js";
 
 
 
@@ -37,7 +38,7 @@ return;
  }
 
  console.log('🗑️ deleteing the paused moovies');
- await delay(1000)
+ await delay(1000,true)
 
    const removeFromClient=true;
   const blocklist=true;

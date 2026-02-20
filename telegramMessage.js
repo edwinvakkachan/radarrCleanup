@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from "./config.js";
+import { delay } from './delay.js';
 
 
 export async function sendTelegramMessage(text) {
@@ -8,4 +9,5 @@ export async function sendTelegramMessage(text) {
     chat_id: config.CHAT_ID,
     text: text
   });
+  await delay(2000,true);
 }

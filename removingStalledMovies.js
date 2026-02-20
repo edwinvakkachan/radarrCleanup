@@ -2,6 +2,7 @@ import config from "./config.js";
 import axios from "axios";
 import { sendTelegramMessage } from "./telegramMessage.js";
 import { fileDelete } from "./fileDelete.js";
+import { delay } from "./delay.js";
 
 
 import { qb } from "./login.js";
@@ -45,7 +46,7 @@ export async function removingStalledMovies(){
        console.log('⚠️ ',value.title)
         if(await qbitorrentFileInfo(value.downloadId)){
           console.log('☑️ stalled movie found');
-          await delay(3000)
+          await delay(3000,true)
           await sendTelegramMessage('☑️ stalled ',value.title)
           console.log(value.title)
           await sendTelegramMessage(value.title)
@@ -60,7 +61,7 @@ export async function removingStalledMovies(){
     }
 
     console.log('🗑️ deleteing the stalled movies');
- await delay(1000)
+ await delay(1000,true)
 
   const removeFromClient=true;
   const blocklist=true;
