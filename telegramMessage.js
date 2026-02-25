@@ -9,5 +9,5 @@ export async function sendTelegramMessage(text) {
     chat_id: config.CHAT_ID,
     text: text
   });
-  await delay(2000,true);
+  await delay(10000,true);
 }
