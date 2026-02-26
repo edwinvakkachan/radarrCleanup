@@ -25,9 +25,11 @@ export async function removeMoviesAlreadyDeleted(){
    const queueId = [];
     for (const value of responce.data.records){
 
+// movies to ignore 
+
       if(!value.movieId){
         console.log(value.title)
-        if (/malayalam|mal/i.test(value.title.toLowerCase())) {
+        if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())) {
     console.log("🚨 Please remove Manualy ", value.title);
     await sendTelegramMessage("🚨 Please remove Manualy")
     await sendTelegramMessage(value.title)
