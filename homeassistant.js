@@ -8,11 +8,6 @@ export async function triggerHAWebhook(errorMessage) {
     await axios.post(
       `${config.homeassistantWebHook}`,
       {
-        status: "error",
-        message: errorMessage,
-        time: new Date().toISOString()
-      },
-      {
         headers: {
           "Content-Type": "application/json"
         },
