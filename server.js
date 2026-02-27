@@ -10,6 +10,7 @@ import { removingFailedMetadataDownloadMovies } from './removingFailedMetadataDo
 import { triggerHomeAssistantWebhook } from './homeassistant/homeassistant.js';
 import { retry } from './homeassistant/retryWrapper.js';
 import { publishMessage } from './queue/publishMessage.js';
+import { log } from './timelog.js';
 
 
 if (!config.api || !config.ip) {
@@ -20,10 +21,7 @@ if (!config.api || !config.ip) {
 
 async function main() {
   try {
-    console.log('🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩');
-        await publishMessage({
-  message: '🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩'
-});
+await log()
     console.log("🚀 Radarr cleanup started");
     await publishMessage({
   message: "🚀 Radarr cleanup started"
@@ -46,11 +44,7 @@ async function main() {
        await publishMessage({
   message: "🏁 Radarr Cleanup completed successfully"
 });
-   console.log('🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩');
-
-      await publishMessage({
-  message: '🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩🍋‍🟩'
-});
+await log();
     process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Radarr Cleanup error :", err.message);
