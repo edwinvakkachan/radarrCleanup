@@ -1,8 +1,8 @@
 import config from "./config.js";
 import axios from "axios";
-import { sendTelegramMessage } from "./telegramMessage.js";
 import { fileDelete } from "./fileDelete.js";
 import { delay } from "./delay.js";
+import { publishMessage } from "./queue/publishMessage.js";
 
 
 import { qb } from "./login.js";
@@ -21,7 +21,10 @@ return false;
 }
 export async function removingFailedMetadataDownloadMovies(){
   console.log("🔍 Removing metadata failed to dwonload movies");
-  await sendTelegramMessage("🔍 Removing metadata failed to download movies")
+
+      await publishMessage({
+  message: "🔍 Removing metadata failed to download movies"
+});
   const {data} = await axios.get(`${config.ip}/api/v3/queue`,{
   headers: {
         "X-Api-Key": config.api
@@ -45,14 +48,18 @@ for (const value of data.records){
   }
  if(await qbitmetadatainfoSearch(value.downloadId)){
    console.log('found: ',value.title)
-   await sendTelegramMessage(value.title)
+       await publishMessage({
+  message: value.title
+});
    queueId.push(value.id);
    continue;
  }
 }
 if(!queueId.length){
   console.log('No file found with zero metadata')
-  await sendTelegramMessage('No file found with zero metadata')
+      await publishMessage({
+  message: 'No file found with zero metadata'
+});
   return;
 }
 

@@ -1,8 +1,8 @@
 import config from "./config.js";
 import axios from "axios";
-import { sendTelegramMessage } from "./telegramMessage.js";
 import { fileDelete } from "./fileDelete.js";
 import { delay } from "./delay.js";
+import { publishMessage } from "./queue/publishMessage.js";
 
 
 import { qb } from "./login.js";
@@ -26,7 +26,10 @@ import { qb } from "./login.js";
 }
 export async function removingStalledMovies(){
    console.log('🔍started to removing the delayed movies')
-   await sendTelegramMessage('🔍started to removing the delayed movies')
+  
+         await publishMessage({
+  message:'🔍started to removing the delayed movies' 
+});
  const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": config.api
@@ -47,16 +50,23 @@ export async function removingStalledMovies(){
         if(await qbitorrentFileInfo(value.downloadId)){
           console.log('☑️ stalled movie found');
           await delay(3000,true)
-          await sendTelegramMessage('☑️ stalled ',value.title)
-          console.log(value.title)
-          await sendTelegramMessage(value.title)
+         
+                   await publishMessage({
+  message: '☑️ stalled '
+});
+                   await publishMessage({
+  message: value.title
+});
+          console.log(value.title);
           queueId.push(value.id);
         }
       }
     }
     if(!queueId.length){
       console.log('☑️ No stalled movie found')
-      await sendTelegramMessage('☑️ No stalled movie found')
+               await publishMessage({
+  message: '☑️ No stalled movie found'
+});
       return
     }
 

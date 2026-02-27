@@ -1,14 +1,17 @@
 import config from "./config.js";
 import axios from "axios";
-import { sendTelegramMessage } from "./telegramMessage.js";
 import { fileDelete } from "./fileDelete.js";
+import { publishMessage } from "./queue/publishMessage.js";
 
 
 
 export async function removeMoviesWhichAreCompletedAndDeleted(){
 
   console.log("🔍 Removing completed movies with title mismatch");
-  await sendTelegramMessage("🔍 Removing completed movies with title mismatch");
+     await publishMessage({
+  message: "🔍 Removing completed movies with title mismatch"
+});
+
     const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": config.api
@@ -33,19 +36,31 @@ try {
   if(value?.statusMessages?.[0]?.messages?.[0] == 'Movie title mismatch, automatic import is not possible. Manual Import required.') {
        if (/malayalam|mal|hindi|hin|tam|tamil/i.test(value.title.toLowerCase())) {
     console.log("🚨 Please remove Manualy ", value.title);
-    await sendTelegramMessage("🚨 Please remove Manualy")
-    await sendTelegramMessage(value.title)
+        await publishMessage({
+  message: "🚨 Please remove Manualy"
+});
+    await publishMessage({
+  message: value.title
+});
+    
+    
     continue;
 }   
     queueId.push(value.id)
        console.log(`🗑️ ${value.title}`);
-       await sendTelegramMessage(`🗑️ ${value.title}`)
+           await publishMessage({
+  message: `🗑️ ${value.title}`
+});
+       
   }
 }
 
   if (!queueId.length) {
     console.log("✅ No completed movies to remove");
-    await sendTelegramMessage('✅ No completed movies to remove')
+    
+              await publishMessage({
+  message: '✅ No completed movies to remove'
+});
     return;
   }
 

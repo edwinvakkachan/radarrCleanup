@@ -1,7 +1,6 @@
 import config from "./config.js";
 import axios from "axios";
-import { sendTelegramMessage } from "./telegramMessage.js";
-
+import { publishMessage } from "./queue/publishMessage.js";
 
 
 
@@ -21,5 +20,8 @@ export async function fileDelete(queueId,removeFromClient=true,blocklist=true,sk
       }
 })
 console.log(`✅ Removed ${queueId.length} movies`);
-await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
+    await publishMessage({
+  message: `✅ Removed ${queueId.length} movies`
+});
+
 }
