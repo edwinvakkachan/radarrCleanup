@@ -1,5 +1,6 @@
 import pool from "../db/pool.js";
-
+import { triggerHomeAssistantWebhook } from "../homeassistant/homeassistant.js";
+import { retry } from "../homeassistant/retryWrapper.js";
 export async function publishMessage({
   message,
   sourceApp = "unknown",
@@ -18,12 +19,23 @@ export async function publishMessage({
     time: new Date().toISOString()
   };
 
-  await pool.query(
-    `
-    INSERT INTO app_message_queue
-    (source_app, event_type, payload, target, scheduled_at)
-    VALUES ($1,$2,$3,$4, COALESCE($5, CURRENT_TIMESTAMP))
-    `,
-    [sourceApp, eventType, payload, target, scheduledAt]
+ try {
+   await pool.query(
+     `
+     INSERT INTO app_message_queue
+     (source_app, event_type, payload, target, scheduled_at)
+     VALUES ($1,$2,$3,$4, COALESCE($5, CURRENT_TIMESTAMP))
+     `,
+     [sourceApp, eventType, payload, target, scheduledAt]
+   );
+ } catch (error) {
+  console.error("Queue insert failed:", err.message);
+        await retry(
+    triggerHomeAssistantWebhook,
+    { status: "success" },
+    "homeassistant-success",
+    5
   );
+
+ }
 }
