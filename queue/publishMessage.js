@@ -29,7 +29,7 @@ export async function publishMessage({
      [sourceApp, eventType, payload, target, scheduledAt]
    );
  } catch (error) {
-  console.error("Queue insert failed:", err.message);
+  console.error("Queue insert failed:", error);
         await retry(
     triggerHomeAssistantWebhook,
     { status: "success" },
