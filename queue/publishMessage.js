@@ -36,6 +36,7 @@ export async function publishMessage({
     "homeassistant-success",
     5
   );
+  process.exit(1)
 
  }
 }
