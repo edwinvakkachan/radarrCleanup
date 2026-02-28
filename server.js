@@ -28,13 +28,13 @@ await log()
 });
     await login();
     await removingStoppedMOvies();
-    await delay(10000)
+    await delay(2000)
     await removingFailedMetadataDownloadMovies();
-    await delay(10000)
+    await delay(2000)
     await removingStalledMovies()
-    await delay(10000)
+    await delay(2000)
     await removeMoviesAlreadyDeleted();
-    await delay(10000)
+    await delay(2000)
     await removeMoviesWhichAreCompletedAndDeleted();
 
     
