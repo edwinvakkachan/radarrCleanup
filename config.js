@@ -12,6 +12,7 @@ ip : process.env.IP,
  qbitUserName: process.env.QBITUSER,
  qbitPassword : process.env.QBITPASS,
  homeassistantWebHook : process.env.HOMEASSISTANTWEBHOOK,
+ databaseurl: process.env.DATABASE_URL
 }
 
 export default config;

@@ -11,7 +11,7 @@ import { triggerHomeAssistantWebhook } from './homeassistant/homeassistant.js';
 import { retry } from './homeassistant/retryWrapper.js';
 import { publishMessage } from './queue/publishMessage.js';
 import { log } from './timelog.js';
-
+import { runCleanup } from './radarrCleanupfromtrakt.js';
 
 if (!config.api || !config.ip) {
   console.error("❌ Missing API or IP environment variables");
@@ -27,6 +27,8 @@ await log()
   message: "🚀 Radarr cleanup started"
 });
     await login();
+    await delay(2000)
+    await runCleanup();
     await removingStoppedMOvies();
     await delay(2000)
     await removingFailedMetadataDownloadMovies();
