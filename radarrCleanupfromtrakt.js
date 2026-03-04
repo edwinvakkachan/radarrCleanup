@@ -41,6 +41,7 @@ export async function runCleanup() {
     m.tags.includes(tagId)
   );
 
+
   const dbRows = await pool.query(`
     SELECT title, year
     FROM radarr_cleanup_queue
@@ -56,7 +57,7 @@ export async function runCleanup() {
     );
 
     if (!match)  {
-        console.log('nothing matching')
+        console.log('movie not matching')
         continue;}
 
     console.log("Deleting:", match.title);
