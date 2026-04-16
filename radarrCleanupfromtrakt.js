@@ -1,5 +1,6 @@
 import axios from "axios";
 import pool from "./db/pool.js";
+import { publishMessage } from "./queue/publishMessage.js";
 
 import config from "./config.js";
 const RADARR_URL = config.ip
@@ -33,6 +34,12 @@ async function deleteMovie(movieId) {
 
 export async function runCleanup() {
 
+
+  console.log('🔍started to cleaning trakt playlist')
+  await publishMessage({
+    message: '🔍started to cleaning trakt playlist'
+  });
+
   const tagId = await getPredvdTagId();
 
   const movies = await radarr.get("/api/v3/movie");
@@ -47,7 +54,7 @@ export async function runCleanup() {
     FROM radarr_cleanup_queue
     WHERE processed = false
   `);
-
+let i =false;
   for (const row of dbRows.rows) {
 
     const match = predvdMovies.find(
@@ -59,8 +66,14 @@ export async function runCleanup() {
     if (!match)  {
         console.log('movie not matching')
         continue;}
-
+    if(match){
+      i=true;
+    }
     console.log("Deleting:", match.title);
+
+    await publishMessage({
+    message: `delleting from traktv palylist ${match.title}`
+  });
 
     await deleteMovie(match.id);
 
@@ -71,7 +84,14 @@ export async function runCleanup() {
       [row.title, row.year]
     );
   }
+if(i){
 
   console.log("Cleanup finished");
+}else {
+  console.log('nothing to be cleaned from traktv playlist')
+    await publishMessage({
+    message: 'nothing to be cleaned from traktv playlist'
+  });
+}
 }
 
