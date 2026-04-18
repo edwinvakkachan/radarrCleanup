@@ -7,9 +7,9 @@ import { publishMessage } from "./queue/publishMessage.js";
 
 export async function removeMoviesWhichAreCompletedAndDeleted(){
 
-  console.log("🔍 Removing completed movies with title mismatch");
+  console.log("🔍Removing movies with title mismatch (file not imported)");
      await publishMessage({
-  message: "🔍 Removing completed movies with title mismatch"
+  message: "🔍 Removing movies with title mismatch (file not imported)"
 });
 
     const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
@@ -56,10 +56,10 @@ try {
 }
 
   if (!queueId.length) {
-    console.log("✅ No completed movies to remove");
+    console.log("✅ No rejected files found (movie title mismatch).");
     
               await publishMessage({
-  message: '✅ No completed movies to remove'
+  message: '✅ No rejected files found (movie title mismatch).'
 });
     return;
   }
