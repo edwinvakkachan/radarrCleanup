@@ -25,10 +25,10 @@ import { qb } from "./login.js";
      }
 }
 export async function removingStalledMovies(){
-   console.log('🔍started to removing the delayed movies')
+   console.log('🔍started to removing the stalled movies')
   
          await publishMessage({
-  message:'🔍started to removing the delayed movies' 
+  message:'🔍started to removing the stalled movies' 
 });
  const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
@@ -46,18 +46,25 @@ export async function removingStalledMovies(){
     const queueId=[];
     for (const value of responce.data.records){
       if(value.status=='warning' && value.errorMessage=='The download is stalled with no connections'){
-       console.log('⚠️ ',value.title)
+      //  console.log('⚠️ stalled movie',value.title)
         if(await qbitorrentFileInfo(value.downloadId)){
-          console.log('☑️ stalled movie found');
+          
           await delay(3000,true)
          
-                   await publishMessage({
-  message: '☑️ stalled '
+if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
+  console.log(`☢️  stalled movie, please remove manually ${value.title} `)
+  continue;
+ }
+
+                    await publishMessage({
+  message: '☑️ stalled movie found: '
 });
                    await publishMessage({
   message: value.title
 });
-          console.log(value.title);
+
+ console.log('☑️ stalled movie found: ',value.title);
+ 
           queueId.push(value.id);
         }
       }
