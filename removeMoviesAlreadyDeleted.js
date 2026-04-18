@@ -5,9 +5,9 @@ import { publishMessage } from "./queue/publishMessage.js";
 
 
 export async function removeMoviesAlreadyDeleted(){
-     console.log("🔍 Removing movies that are removed from import list of radarr");
+     console.log("🔍 Removing movies that were already deleted from Radarr manually");
         await publishMessage({
-  message: "🔍 Removing movies that are removed from import list  of radarr"
+  message: "🔍 Removing movies that were already deleted from Radarr manually"
 });
     const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
@@ -53,10 +53,10 @@ console.log(`🗑️ ${value.title}`);
     }
 
       if (!queueId.length) {
-    console.log("✅ No movies found");
+    console.log("✅ No movies found that were manually deleted from Radarr");
 
     await publishMessage({
-  message: '✅ No movies found'
+  message: '✅ No movies found that were manually deleted from Radarr'
 });
     return;
   }
