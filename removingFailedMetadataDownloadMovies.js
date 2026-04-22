@@ -47,18 +47,23 @@ for (const value of data.records){
     continue;
   }
  if(await qbitmetadatainfoSearch(value.downloadId)){
-   console.log('found: ',value.title)
+   console.log('☢️ Found files with failed metadata downloaded 📥: ',value.title)
        await publishMessage({
   message: value.title
 });
+
+if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
+  console.log(`☢️ Found files with failed metadata downloaded — please remove manually: ${value.title} `)
+  continue;
+ }
    queueId.push(value.id);
    continue;
  }
 }
 if(!queueId.length){
-  console.log('No file found with zero metadata')
+  console.log('No files found with zero metadata 📂')
       await publishMessage({
-  message: 'No file found with zero metadata'
+  message: 'No files found with zero metadata 📂'
 });
   return;
 }
