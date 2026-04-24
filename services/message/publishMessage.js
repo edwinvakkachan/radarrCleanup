@@ -1,4 +1,4 @@
-import pool from "../db/pool.js";
+import pool from "../../db/pool.js";
 import { triggerHomeAssistantWebhook } from "../homeassistant/homeassistant.js";
 import { retry } from "../homeassistant/retryWrapper.js";
 export async function publishMessage({

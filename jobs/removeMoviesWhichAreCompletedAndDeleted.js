@@ -1,7 +1,7 @@
-import config from "./config.js";
+import config from "../config.js";
 import axios from "axios";
-import { fileDelete } from "./fileDelete.js";
-import { publishMessage } from "./queue/publishMessage.js";
+import { fileDelete } from "./fileDelete.js"; 
+import { publishMessage } from "../services/message/publishMessage.js";
 
 
 

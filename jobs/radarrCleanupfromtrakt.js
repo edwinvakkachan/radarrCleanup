@@ -1,8 +1,8 @@
 import axios from "axios";
-import pool from "./db/pool.js";
-import { publishMessage } from "./queue/publishMessage.js";
+import pool from "../db/pool.js";
+import { publishMessage } from "../services/message/publishMessage.js"; 
 
-import config from "./config.js";
+import config from "../config.js";
 const RADARR_URL = config.ip
 const API_KEY = config.api
 

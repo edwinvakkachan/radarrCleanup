@@ -1,12 +1,12 @@
-import config from "./config.js";
+import config from "../config.js";
 import axios from "axios";
 import { fileDelete } from "./fileDelete.js";
-import { delay } from "./delay.js";
-import { publishMessage } from "./queue/publishMessage.js";
+import { delay } from "../utils/delay.js";
+import { publishMessage } from "../services/message/publishMessage.js";
 
 
-import { qb } from "./login.js";
-
+import { qb } from "../login.js";
+// meta data time is 10 minute and for malayalam movies is 30 minutes
 async function qbitmetadatainfoSearch(downloadId){
 const {data} = await qb.get('/api/v2/torrents/info',{
     params: { hashes: downloadId.toLowerCase() }

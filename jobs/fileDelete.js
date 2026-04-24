@@ -1,6 +1,6 @@
-import config from "./config.js";
+import config from "../config.js";
 import axios from "axios";
-import { publishMessage } from "./queue/publishMessage.js";
+import { publishMessage } from "../services/message/publishMessage.js";
 
 
 

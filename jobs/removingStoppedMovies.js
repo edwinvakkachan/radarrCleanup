@@ -1,8 +1,8 @@
-import config from "./config.js";
+import config from "../config.js";
 import axios from "axios";
 import { fileDelete } from "./fileDelete.js";
-import { delay } from "./delay.js";
-import { publishMessage } from "./queue/publishMessage.js";
+import { delay } from "../utils/delay.js";
+import { publishMessage } from "../services/message/publishMessage.js";
 
 
 export async function removingStoppedMOvies(){

@@ -1,11 +1,11 @@
-import config from "./config.js";
+import config from "../config.js";
 import axios from "axios";
 import { fileDelete } from "./fileDelete.js";
-import { delay } from "./delay.js";
-import { publishMessage } from "./queue/publishMessage.js";
+import { delay } from "../utils/delay.js";
+import { publishMessage } from "../services/message/publishMessage.js";
 
 
-import { qb } from "./login.js";
+import { qb } from "../login.js";
 
 
  async function qbitorrentFileInfo(downloadId){

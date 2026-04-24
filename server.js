@@ -1,17 +1,17 @@
 
 import  config  from './config.js';
-import { delay } from './delay.js';
-import { removeMoviesAlreadyDeleted } from './removeMoviesAlreadyDeleted.js';
-import { removeMoviesWhichAreCompletedAndDeleted } from './removeMoviesWhichAreCompletedAndDeleted.js';
-import { removingStoppedMOvies } from './removingStoppedMovies.js';
+import { delay } from './utils/delay.js';
+import { removeMoviesAlreadyDeleted } from './jobs/removeMoviesAlreadyDeleted.js';
+import { removeMoviesWhichAreCompletedAndDeleted } from './jobs/removeMoviesWhichAreCompletedAndDeleted.js';
+import { removingStoppedMOvies } from './jobs/removingStoppedMovies.js';
 import { login } from './login.js';
-import { removingStalledMovies } from './removingStalledMovies.js';
-import { removingFailedMetadataDownloadMovies } from './removingFailedMetadataDownloadMovies.js';
-import { triggerHomeAssistantWebhook } from './homeassistant/homeassistant.js';
-import { retry } from './homeassistant/retryWrapper.js';
-import { publishMessage } from './queue/publishMessage.js';
-import { log } from './timelog.js';
-import { runCleanup } from './radarrCleanupfromtrakt.js';
+import { removingStalledMovies } from './jobs/removingStalledMovies.js';
+import { removingFailedMetadataDownloadMovies } from './jobs/removingFailedMetadataDownloadMovies.js';
+import { triggerHomeAssistantWebhook } from './services/homeassistant/homeassistant.js';
+import { retry } from './services/homeassistant/retryWrapper.js';
+import { publishMessage } from './services/message/publishMessage.js';
+import { log } from './utils/timelog.js';
+import { runCleanup } from './jobs/radarrCleanupfromtrakt.js';
 
 if (!config.api || !config.ip) {
   console.error("❌ Missing API or IP environment variables");
