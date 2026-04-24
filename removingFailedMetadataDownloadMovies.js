@@ -12,11 +12,17 @@ const {data} = await qb.get('/api/v2/torrents/info',{
     params: { hashes: downloadId.toLowerCase() }
   });
   for (const value of data){
-    if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 1200 && value.availability==0){
-      return true
+    if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 600 && value.availability==0){
+      return {
+        time:value.time_active,
+        value:true
+      }
     }
   }
-return false;
+return {
+        time:0,
+        value:false
+      };
 
 }
 export async function removingFailedMetadataDownloadMovies(){
@@ -46,16 +52,20 @@ for (const value of data.records){
     console.log(`Torrent hash not found ${value.title}`)
     continue;
   }
- if(await qbitmetadatainfoSearch(value.downloadId)){
-   console.log('☢️ Found files with failed metadata downloaded 📥: ',value.title)
+  const result = await qbitmetadatainfoSearch(value.downloadId)
+ if(result.value){
+
+
+if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase()) && result.time>=1800){
+  console.log(`☢️ Found files with failed metadata downloaded — please remove manually: ${value.title} `)
+  continue;
+ }
+
+    console.log('☢️ Found files with failed metadata downloaded 📥: ',value.title)
        await publishMessage({
   message: value.title
 });
 
-if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
-  console.log(`☢️ Found files with failed metadata downloaded — please remove manually: ${value.title} `)
-  continue;
- }
    queueId.push(value.id);
    continue;
  }
