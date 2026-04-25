@@ -81,7 +81,7 @@ if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
           queueId.push(value.id);
         }
 
-        if(result.value==false && result.time>1){
+        if(result.value==false && result.time>3600){
      
           console.log(`movie going to push to bottom \n ${value.title} \n time ${result.time/3600}`);
           resetQueue.push(value.downloadId);
