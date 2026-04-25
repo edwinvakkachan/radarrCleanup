@@ -4,14 +4,6 @@ import config from "./config.js";
 import axios from "axios";
 
 
-// qbit login
-
-// const jar = new CookieJar();
-// const qb = wrapper(axios.create({
-//   baseURL: config.qbitIp, // qBittorrent Web UI
-//   jar,
-//   withCredentials: true
-// }));
 
 
 const jar = new CookieJar();

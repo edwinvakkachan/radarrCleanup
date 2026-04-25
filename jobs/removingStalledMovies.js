@@ -9,6 +9,7 @@ import { qb } from "../login.js";
 
 
  async function qbitorrentFileInfo(downloadId){
+
   const {data} = await qb.get('/api/v2/torrents/info',{
     params: { hashes: downloadId.toLowerCase() }
   });
@@ -16,20 +17,29 @@ import { qb } from "../login.js";
      for (const value of data){
         if(value.time_active>=config.qbitTime){
         console.log(`✅ YES atcive time: ${Math.round(value.time_active/3600)}hrs` )
-        return true
+        return {
+          value:true,
+          time:value.time_active
+        }
       }
       else {
         console.log(`❌ NO atcive time: ${Math.round(value.time_active/3600)}hrs`)
-        return false
+        return {
+          value:false,
+          time:value.time_active
+        }
       } 
      }
 }
+
+
 export async function removingStalledMovies(){
    console.log('🔍Started removing the stalled movies 🎬')
   
          await publishMessage({
   message:'🔍Started removing the stalled movies 🎬' 
 });
+
  const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": config.api
@@ -43,11 +53,14 @@ export async function removingStalledMovies(){
         protocol: "torrent",
       }
     })
+
     const queueId=[];
+    const resetQueue=[];
     for (const value of responce.data.records){
       if(value.status=='warning' && value.errorMessage=='The download is stalled with no connections'){
        console.log('⚠️ For movie',value.title)
-        if(await qbitorrentFileInfo(value.downloadId)){
+       const result = await qbitorrentFileInfo(value.downloadId)
+        if(result.value){
           
           await delay(3000,true)
          
@@ -67,8 +80,23 @@ if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
  
           queueId.push(value.id);
         }
+
+        if(result.value==false && result.time>1){
+     
+          console.log(`movie going to push to bottom \n ${value.title} \n time ${result.time/3600}`);
+          resetQueue.push(value.downloadId);
+        }
       }
     }
+
+//function to move stalled move to bottom 
+if(resetQueue.length>0){
+  console.log(`moving stalled movie to bottom, count: ${resetQueue.length}`)
+    await qb.post('/api/v2/torrents/bottomPrio', new URLSearchParams({
+  hashes: resetQueue.join('|')
+}))
+}
+  
     if(!queueId.length){
       console.log('✅ No stalled movies found 🎬')
                await publishMessage({
@@ -84,7 +112,7 @@ if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
   const blocklist=true;
   const skipRedownload=false;
 
-await fileDelete(queueId, removeFromClient, blocklist, skipRedownload);
-
-
+await fileDelete(queueId, removeFromClient, blocklist, skipRedownload);  
 }
+
+
