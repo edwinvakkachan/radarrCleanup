@@ -14,10 +14,36 @@ import { qb } from "../login.js";
     params: { hashes: downloadId.toLowerCase() }
   });
  
+let movies ={};
+
      for (const value of data){
-        if(value.time_active>=config.qbitTime){
-        console.log(`✅ YES atcive time: ${Math.round(value.time_active/3600)}hrs` )
+
+          movies ={
+          name:value.name,
+          state:value.state,
+          progress:value.progress,
+          availability:value.availability,
+          seeders:value.num_seeds,
+          dlspeed:value.dlspeed
+         }
+
+console.log(movies);
+// finding the dead torrents 
+        if(value.time_active>=1800 
+          && value.state=='stalledDL' 
+          && value.progress<0.1
+          && value.availability === 0
+          && value.num_seeds === 0 
+          && value.dlspeed === 0
+         ){
+        console.log(`✅ Found dead torrent` )
         return {
+          value:true,
+          time:value.time_active
+        }
+      }else if(value.time_active>=config.qbitTime){
+console.log(`✅ Found stalled torrent : ${Math.round(value.time_active/3600)}hrs` );
+return {
           value:true,
           time:value.time_active
         }
@@ -69,12 +95,6 @@ if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
   continue;
  }
 
-                    await publishMessage({
-  message: '☑️ Stalled movie found: 🎬'
-});
-                   await publishMessage({
-  message: value.title
-});
 
  console.log('☑️ Stalled movie found: 🎬',value.title);
  
