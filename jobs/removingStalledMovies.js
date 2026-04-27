@@ -92,7 +92,10 @@ export async function removingStalledMovies(){
          
 if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
   console.log(`☢️ Stalled movie — please remove manually: ${value.title} `)
-  continue;
+  if(result.value<7200){
+    
+    continue;
+  }
  }
 
 
