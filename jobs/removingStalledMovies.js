@@ -91,10 +91,13 @@ export async function removingStalledMovies(){
           await delay(3000,true)
          
 if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
-  console.log(`☢️ Stalled movie — please remove manually: ${value.title} `)
-  if(result.value<7200){
-    
+  
+  if(result.time<7200){
+    console.log(`☢️ Stalled indian  movie — please remove manually: ${value.title} `)
     continue;
+  }
+  else if(result.time>7200){
+console.log(`☢️ Stalled indian  movie  removing : ${value.title} `)
   }
  }
 
