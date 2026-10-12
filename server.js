@@ -35,9 +35,9 @@ await log()
     await delay(2000)
     await removingStalledMovies()
     await delay(2000)
-    await removeMoviesAlreadyDeleted();
-    await delay(2000)
-    await removeMoviesWhichAreCompletedAndDeleted();
+    // await removeMoviesAlreadyDeleted();
+    // await delay(2000)
+    // await removeMoviesWhichAreCompletedAndDeleted();
 
     
   
